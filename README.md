@@ -1,127 +1,105 @@
-# PrisimAI
+# PrisimAI Ultimate - Liquid Glass Image Generator
 
-PrisimAI is a progressive web app (PWA) that lets you chat with models powered by Pollinations.ai
-. It’s designed to look sleek, run fast, and stay usable even when offline. Once installed, PrisimAI behaves like a native app on desktop or mobile, complete with icons, splash screens, and offline support.
+PrisimAI Ultimate is a **powerful, browser-based AI image generator** with a sleek **liquid glass UI**. It allows users to generate images using **Flux** and **Turbo** models with full customization options, prompt history, batch generation, and more.  
 
-## ✨ Features
+Built with **HTML, CSS (Tailwind), and JavaScript**, it’s designed to feel like a professional tool while remaining lightweight and fast.
 
-- Chat Interface – Seamless, modern chat UI built with Tailwind CSS.
+---
 
-- Model Selection – Choose different AI models from Pollinations API.
+## 🌟 Features
 
-- PWA Support – Installable on desktop and mobile, with offline caching.
+- **AI Models**: Choose between `Flux` and `Turbo` for different image generation styles.
+- **Prompt History**: Automatically saves your recent prompts for easy reuse.
+- **Batch Generation**: Generate up to 5 images at once.
+- **Image Variations / Remix**: Right-click on any image to generate a new variation.
+- **Advanced Controls**:  
+  - Select image **size** (`256x256`, `512x512`, `1024x1024`)  
+  - Choose **style** (`Anime`, `Realistic`, `Cartoon`, `Fantasy`)  
+  - Set a **seed** for reproducible outputs
+- **Download Images**: Save your generated images with one click.
+- **Draggable Images**: Reorder your generated images in the feed.
+- **Ultra Liquid Glass UI**: Sleek glassmorphism with animated gradients and soft shadows.
+- **Dark Mode Support**: Toggle between light and dark themes.
+- **Responsive Layout**: Optimized for desktop and mobile.
 
-- Offline Mode – Displays a custom offline page when there’s no internet.
+---
 
-- Theming – Colors and fonts configured for a clean, modern experience.
+## ⚡ How to Use
 
-- Cross-Platform Support – Works on Chrome, Edge, Safari, and mobile browsers.
+1. Open `index.html` in your browser.
+2. Type your prompt into the **prompt box**.
+3. Select your desired **model**, **size**, and **style**.
+4. Optionally, enter a **seed** for reproducible results.
+5. Choose your **batch size** (1–5) if you want multiple images.
+6. Click **Generate Image**.
+7. Right-click on any image to remix it.
+8. Download images using the **Download** button below each image.
+9. Clear the feed with the **Clear Images** button.
 
-`
-## 🚀 Getting Started
-### 1. Clone the Repository
+---
 
-`git clone https://github.com/yourusername/prisimai.git`
+## 💻 Installation
 
-`cd prisimai`
+1. Clone or download the repository.
+2. Open `index.html` in any modern browser.
+3. Optional: Add a Service Worker for offline caching (`sw.js` included).
 
-### 2. Add Icons
+---
 
-Place your generated icons in the /icons folder.
+## 🔧 Customization
 
-**Required: icon-192.png and icon-512.png**
+- **Colors & Theme**: Edit `:root` CSS variables or Tailwind classes.
+- **Glassmorphism Strength**: Adjust `backdrop-filter`, `opacity`, or gradient animations.
+- **API Key**: Replace the `apiKey` in the script with your own if needed.
 
-*Optional: Apple Touch Icon (apple-touch-icon.png) and favicons*
+---
 
-If you don’t already have icons, you can generate them using a favicon generator (e.g. favicon.io
-).*
+## ⚙️ API Integration
 
-### 3. Run Locally
+- Uses **[Pollinations AI](https://image.pollinations.ai/)** for image generation.
+- Supports `Flux` and `Turbo` models.
+- Includes parameters for:
+  - `size` (image dimensions)  
+  - `style` (art style)  
+  - `seed` (reproducibility)  
 
-You need a local server to test service workers (they don’t run from file://).
+---
 
-*Quick option: use Python’s HTTP server:*
+## 🛠 Tech Stack
 
-#### Python 3
-`python 
-python -m http.server 8080
-`
+- **HTML5 & CSS3**
+- **Tailwind CSS**
+- **JavaScript (Vanilla)**
+- **Service Worker** (offline caching)
+- **Pollinations AI** for image generation
 
+---
 
-#### Then visit:
+## 📂 Project Structure
 
-http://localhost:8080
+```
+PrisimAI/
+│
+├─ index.html          # Main application
+├─ sw.js               # Service worker (optional)
+├─ styles.css          # Custom styles (optional, mostly inline)
+├─ README.md           # This file
+├─ favicon.ico         # Site icons
+└─ assets/             # Any images or assets
+```
 
-### 4. Deploy
+---
 
-- GitHub Pages: Push to a GitHub repo and enable GitHub Pages in your repo settings.
+## 🚀 Future Improvements
 
-- Netlify/Vercel: Drag and drop the project folder into your dashboard.
+- Sliders for **creativity, realism, and style intensity**
+- **Export multiple images** as GIFs or ZIP
+- **Offline AI support** using WebLLM
+- **User accounts** with saved image history
+- **Sharing to social media** directly
 
-- Custom Hosting: Upload all files to your web server root.
-
-## 📱 Installation (as PWA)
-
-Open PrisimAI in Chrome, Edge, or Safari.
-
-Click the “Install App” prompt (or “Add to Home Screen” on iOS).
-
-Launch it like a normal app — complete with splash screen and custom icon.
-
-## ⚡ Offline Support
-
-When online, assets and API calls are cached automatically.
-
-If offline, cached assets load instantly.
-
-If a requested resource isn’t available, the app displays offline.html.
-
-This ensures the app feels responsive even without an internet connection.
-
-## 🛠 Customization
-### Colors & Theme
-
-Change the theme color in:
-
-manifest.json → "theme_color" and "background_color"
-
-<meta name="theme-color"> inside index.html and offline.html
-
-API Integration
-
-Right now, the chat uses the Pollinations.ai API. You can swap this out with any other AI API by modifying the JavaScript fetch logic inside index.html.
-
-Caching
-
-Adjust what’s cached offline by editing the ASSETS array in sw.js.
-
-## 🔒 Permissions
-
-This app:
-
-- Does not collect user data.
-
-- Does not require login.
-
-- Only communicates with external APIs when explicitly requested (Pollinations API).
-
-## 🧩 Browser Compatibility
-
-- Chrome / Edge (Desktop & Android) → Full support (PWA install, offline, push updates).
-
-- Safari (iOS & macOS) → Supports install and Apple Touch Icon, but service workers have limited background functionality.
-
-- Firefox → Works as a website but limited PWA features.
+---
 
 ## 📜 License
 
-This project is open-source under the MIT License.
-You are free to use, modify, and distribute it with attribution.
-
-# 🙌 Credits
-
-### Built with Tailwind CSS
-
-### Powered by Pollinations.ai API
-
-### Icon design inspired by Prism & AI themes
+MIT License – free to use, modify, and distribute.
