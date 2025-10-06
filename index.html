@@ -8,107 +8,83 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-    --glass-bg: rgba(255, 255, 255, 0.18);
-    --glass-border: rgba(255, 255, 255, 0.3);
-    --glass-shadow: 0 10px 40px 0 rgba(31,38,135,0.2);
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-shadow: 0 20px 40px rgba(31,38,135,0.2);
 }
-body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #f0f4ff 0%, #e6f0ff 100%);
-}
-body.dark {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-}
-.glass {
-    background: var(--glass-bg);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
-    border-radius: 2rem;
-}
-#image-feed::-webkit-scrollbar { width: 8px; }
-#image-feed::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
-#image-feed::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 4px; }
-@keyframes bounce-dot {0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
-.bounce-dot { animation: bounce-dot 1.4s infinite ease-in-out; }
-.fade-in { animation: fadeIn 0.3s ease-out forwards; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);} }
+body { font-family:'Inter',sans-serif; background: linear-gradient(135deg,#e0f7ff 0%,#cfe9ff 100%); overflow:hidden; }
+body.dark { background: linear-gradient(135deg,#0f172a 0%,#1e293b 100%);}
+.glass { background: var(--glass-bg); backdrop-filter: blur(30px) saturate(220%) brightness(1.2); -webkit-backdrop-filter: blur(30px) saturate(220%) brightness(1.2); border:1px solid var(--glass-border); box-shadow: var(--glass-shadow); border-radius:2rem; position:relative; overflow:hidden; transition: all 0.3s ease; }
+.glass::before { content:''; position:absolute; inset:0; background: linear-gradient(120deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05), rgba(255,255,255,0.1)); pointer-events:none; mix-blend-mode: overlay; border-radius:2rem; }
+.liquid-gradient { background: linear-gradient(270deg,#ff88cc,#88ccff,#88ffdd,#ffcc88); background-size:600% 600%; animation: animateGradient 12s ease infinite; position:absolute; inset:0; opacity:0.1; z-index:0; border-radius:2rem; }
+@keyframes animateGradient {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+#image-feed::-webkit-scrollbar { width:10px; }
+#image-feed::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius:5px;}
+#image-feed::-webkit-scrollbar-track { background: rgba(0,0,0,0.05);}
+.fade-in {animation: fadeIn 0.3s ease-out forwards;}
+@keyframes fadeIn {from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.bounce-dot {animation:bounce-dot 1.4s infinite ease-in-out;}
+@keyframes bounce-dot {0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.img-card {cursor:grab; transition: transform 0.2s ease, box-shadow 0.2s ease; border-radius:1.5rem;}
+.img-card:hover {transform:scale(1.02); box-shadow:0 25px 50px rgba(0,0,0,0.35);}
+.img-controls {display:flex;justify-between;margin-top:4px;}
+.img-controls button {padding:0.25rem 0.5rem;border-radius:0.5rem;font-size:0.85rem;}
 </style>
 </head>
-<body class="flex h-screen overflow-hidden antialiased text-gray-800 dark:text-gray-100 transition-colors duration-300">
+<body class="flex flex-col md:flex-row h-screen text-gray-900 dark:text-gray-100">
 
 <!-- Sidebar -->
-<aside class="w-72 flex-shrink-0 flex flex-col justify-between p-6 shadow-xl glass m-4">
-    <div class="space-y-6">
-        <button id="dark-mode-toggle" class="absolute top-4 right-4 p-2 rounded-full bg-white/20 dark:bg-gray-700/20 text-gray-700 dark:text-gray-200 shadow hover:bg-white/30 dark:hover:bg-gray-600/30 transition-all duration-200">
-            🌙
-        </button>
-        <div class="flex items-center space-x-3 mb-6">
-            <h1 class="text-xl font-bold text-gray-900 dark:text-white">PrisimAI Images</h1>
-        </div>
+<aside class="w-full md:w-80 flex-shrink-0 flex flex-col justify-between p-6 glass m-4 shadow-xl relative z-10">
+    <div class="space-y-4">
+        <button id="dark-mode-toggle" class="absolute top-4 right-4 p-2 rounded-full bg-white/20 dark:bg-gray-700/20 shadow hover:bg-white/30 dark:hover:bg-gray-600/30">🌙</button>
+        <h1 class="text-2xl font-bold text-purple-600 dark:text-purple-400">PrisimIG</h1>
+        <textarea id="image-prompt" placeholder="Describe your image..." rows="3" class="w-full p-3 rounded-2xl border border-gray-300/30 dark:border-gray-600/30 bg-white/30 dark:bg-gray-700/30 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none shadow"></textarea>
+        <div id="prompt-history" class="flex flex-wrap mt-2"></div>
 
-        <button id="new-gen-btn" class="w-full p-2 rounded-xl bg-purple-500/20 text-purple-600 dark:text-purple-300 font-semibold shadow hover:bg-purple-500/30 active:scale-95 transition-all duration-200">
-            + New Generation
-        </button>
-
-        <div class="space-y-2 mt-8">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Model</label>
-            <select id="model-selector" class="w-full p-2 rounded-xl border border-gray-300/30 dark:border-gray-600/30 bg-white/20 dark:bg-gray-800/30 focus:outline-none focus:ring-2 focus:ring-purple-500 shadow">
+        <div class="space-y-2">
+            <label>Model</label>
+            <select id="model-selector" class="w-full p-2 rounded-xl border border-gray-300/30 dark:border-gray-600/30 bg-white/20 dark:bg-gray-800/30">
                 <option value="flux">Flux</option>
                 <option value="turbo">Turbo</option>
             </select>
         </div>
+        <div class="space-y-2">
+            <label>Size</label>
+            <select id="size-selector" class="w-full p-2 rounded-xl border border-gray-300/30 dark:border-gray-600/30 bg-white/20 dark:bg-gray-800/30">
+                <option value="256x256">256x256</option>
+                <option value="512x512" selected>512x512</option>
+                <option value="1024x1024">1024x1024</option>
+            </select>
+        </div>
+        <div class="space-y-2">
+            <label>Style</label>
+            <select id="style-selector" class="w-full p-2 rounded-xl border border-gray-300/30 dark:border-gray-600/30 bg-white/20 dark:bg-gray-800/30">
+                <option value="realistic">Realistic</option>
+                <option value="anime" selected>Anime</option>
+                <option value="cartoon">Cartoon</option>
+                <option value="fantasy">Fantasy</option>
+            </select>
+        </div>
+        <label>Batch Size (1-5)</label>
+        <input type="number" id="batch-size" min="1" max="5" value="1" class="w-full p-2 rounded-xl border border-gray-300/30 dark:border-gray-600/30 bg-white/20 dark:bg-gray-800/30">
+        <input type="number" id="seed-input" placeholder="Seed (optional)" class="w-full p-2 rounded-xl border border-gray-300/30 dark:border-gray-600/30 bg-white/20 dark:bg-gray-800/30">
+        <button id="generate-btn" class="w-full p-3 rounded-2xl bg-purple-500 text-white shadow-lg hover:bg-purple-600 active:bg-purple-700">Generate Image</button>
+        <button id="clear-feed" class="w-full p-3 rounded-2xl bg-gray-200 text-gray-800 shadow-lg hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600">Clear Images</button>
     </div>
 </aside>
 
-<!-- Main Content -->
-<main class="flex-1 flex flex-col relative p-4 overflow-hidden">
-    <div class="flex-1 flex flex-col items-center w-full max-w-4xl mx-auto space-y-6">
-        <!-- Input Container -->
-        <div class="w-full glass p-6 space-y-4">
-            <textarea id="image-prompt" placeholder="Describe your image..." rows="2" class="w-full p-3 rounded-2xl border border-gray-300/30 dark:border-gray-600/30 bg-white/30 dark:bg-gray-700/30 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none shadow"></textarea>
-
-            <div class="flex flex-wrap gap-2">
-                <select id="size-selector" class="flex-1 p-2 rounded-xl border border-gray-300/30 dark:border-gray-600/30 bg-white/20 dark:bg-gray-800/30 focus:ring-purple-500">
-                    <option value="256x256">256x256</option>
-                    <option value="512x512" selected>512x512</option>
-                    <option value="1024x1024">1024x1024</option>
-                </select>
-                <select id="style-selector" class="flex-1 p-2 rounded-xl border border-gray-300/30 dark:border-gray-600/30 bg-white/20 dark:bg-gray-800/30 focus:ring-purple-500">
-                    <option value="realistic">Realistic</option>
-                    <option value="anime" selected>Anime</option>
-                    <option value="cartoon">Cartoon</option>
-                    <option value="fantasy">Fantasy</option>
-                </select>
-                <input type="number" id="seed-input" placeholder="Seed (optional)" class="flex-1 p-2 rounded-xl border border-gray-300/30 dark:border-gray-600/30 bg-white/20 dark:bg-gray-800/30 focus:ring-purple-500">
-            </div>
-
-            <div class="flex flex-wrap gap-2">
-                <label class="flex-1 flex items-center gap-2">
-                    Creativity
-                    <input type="range" id="creativity" min="0" max="100" value="50" class="flex-1">
-                </label>
-                <label class="flex-1 flex items-center gap-2">
-                    Realism
-                    <input type="range" id="realism" min="0" max="100" value="50" class="flex-1">
-                </label>
-            </div>
-
-            <button id="generate-btn" class="w-full p-3 rounded-2xl bg-purple-500 text-white shadow-lg hover:bg-purple-600 active:bg-purple-700 transition-all duration-200">Generate Image</button>
-        </div>
-
-        <!-- Image Feed -->
-        <div id="image-feed" class="w-full space-y-6 overflow-y-auto"></div>
+<!-- Main Feed -->
+<main class="flex-1 flex flex-col p-6 overflow-y-auto">
+    <div class="relative glass p-6 mb-6">
+        <div class="liquid-gradient"></div>
+        <h2 class="text-xl font-semibold relative z-10 mb-4">Generated Images</h2>
+        <div id="image-feed" class="flex flex-wrap gap-4 relative z-10"></div>
     </div>
 </main>
 
 <script>
 const darkToggle = document.getElementById('dark-mode-toggle');
-darkToggle.addEventListener('click', ()=>{
-    document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', document.documentElement.classList.contains('dark')?'dark':'light');
-});
+darkToggle.addEventListener('click', ()=>{ document.documentElement.classList.toggle('dark'); localStorage.setItem('theme', document.documentElement.classList.contains('dark')?'dark':'light'); });
 if(localStorage.getItem('theme')==='dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
 
 const generateBtn = document.getElementById('generate-btn');
@@ -118,12 +94,32 @@ const promptInput = document.getElementById('image-prompt');
 const sizeSelector = document.getElementById('size-selector');
 const styleSelector = document.getElementById('style-selector');
 const seedInput = document.getElementById('seed-input');
-const creativity = document.getElementById('creativity');
-const realism = document.getElementById('realism');
-
+const batchSizeInput = document.getElementById('batch-size');
+const promptHistoryContainer = document.getElementById('prompt-history');
 const apiKey = 'ScdTyGr9t5KJxW_c';
 const referrer = 'https://prisimai.github.io/PrisimAI';
 const imageApiUrl = 'https://image.pollinations.ai/prompt/';
+
+let promptHistory = JSON.parse(localStorage.getItem('promptHistory')||'[]');
+
+function savePrompt(prompt){
+    if(!prompt) return;
+    promptHistory.unshift(prompt);
+    promptHistory = [...new Set(promptHistory)].slice(0,20);
+    localStorage.setItem('promptHistory', JSON.stringify(promptHistory));
+    renderPromptHistory();
+}
+function renderPromptHistory(){
+    promptHistoryContainer.innerHTML='';
+    promptHistory.forEach(p=>{
+        const btn=document.createElement('button');
+        btn.textContent=p;
+        btn.className='p-1 px-2 rounded bg-gray-200 dark:bg-gray-700 m-1 text-sm';
+        btn.onclick=()=>{ promptInput.value=p; };
+        promptHistoryContainer.appendChild(btn);
+    });
+}
+renderPromptHistory();
 
 function showLoading() {
     const loader = document.createElement('div');
@@ -135,40 +131,73 @@ function showLoading() {
     return loader;
 }
 
-async function generateImage() {
-    const prompt = promptInput.value.trim();
-    if(!prompt) return;
+async function generateImage(prompt, seed){
     const loader = showLoading();
     const params = {
         model:modelSelector.value,
         size:sizeSelector.value,
         style:styleSelector.value,
-        seed: seedInput.value || '',
-        creativity: creativity.value,
-        realism: realism.value
+        seed: seed||''
     };
-    const url = `${imageApiUrl}${encodeURIComponent(prompt)}?model=${params.model}&size=${params.size}&style=${params.style}&seed=${params.seed}&creativity=${params.creativity}&realism=${params.realism}&key=${apiKey}&referrer=${referrer}`;
-
+    const url = `${imageApiUrl}${encodeURIComponent(prompt)}?model=${params.model}&size=${params.size}&style=${params.style}&seed=${params.seed}&key=${apiKey}&referrer=${referrer}`;
     try{
         const res = await fetch(url);
         if(res.ok){
+            const imgWrapper = document.createElement('div');
+            imgWrapper.className='flex flex-col items-center w-64 fade-in';
             const img = document.createElement('img');
             img.src=url;
-            img.className='rounded-xl shadow-lg w-full fade-in';
-            imageFeed.prepend(img);
-        } else { alert('Failed to generate image'); }
+            img.className='img-card w-full shadow-lg';
+            img.draggable=true;
+            img.title="Right click to remix";
+
+            // Right click for remix
+            img.oncontextmenu = e=>{ e.preventDefault(); promptInput.value=`Remix this image: ${img.src}`; };
+
+            const controls = document.createElement('div');
+            controls.className='img-controls';
+            const downloadBtn = document.createElement('button');
+            downloadBtn.textContent='Download';
+            downloadBtn.onclick=()=>{ const a=document.createElement('a'); a.href=url; a.download='prisimai.png'; a.click(); };
+            controls.appendChild(downloadBtn);
+
+            imgWrapper.appendChild(img);
+            imgWrapper.appendChild(controls);
+            imageFeed.prepend(imgWrapper);
+        } else alert('Failed to generate image');
     } catch(e){ console.error(e); alert('Error generating image'); }
     finally{ loader.remove(); }
 }
 
-generateBtn.addEventListener('click', generateImage);
-document.getElementById('new-gen-btn').addEventListener('click', ()=>{
-    imageFeed.innerHTML='';
-    promptInput.value='';
+generateBtn.addEventListener('click', async ()=>{
+    const prompt = promptInput.value.trim();
+    if(!prompt) return;
+    savePrompt(prompt);
+    const batch = Math.min(Math.max(parseInt(batchSizeInput.value)||1,1),5);
+    for(let i=0;i<batch;i++){
+        let seed = seedInput.value || Math.floor(Math.random()*100000);
+        await generateImage(prompt, seed);
+    }
 });
+
+document.getElementById('clear-feed').addEventListener('click', ()=>{imageFeed.innerHTML=''; promptInput.value='';});
+
+// Auto-resize textarea
 promptInput.addEventListener('input', ()=>{
     promptInput.style.height='auto';
     promptInput.style.height=`${promptInput.scrollHeight}px`;
+});
+
+// Simple draggable images
+let dragged;
+document.addEventListener('dragstart', e=>{ if(e.target.classList.contains('img-card')) dragged=e.target; });
+document.addEventListener('dragover', e=>e.preventDefault());
+document.addEventListener('drop', e=>{
+    e.preventDefault();
+    if(e.target.classList.contains('img-card') && dragged){
+        const rect = e.target.getBoundingClientRect();
+        if(e.clientY<rect.top+rect.height/2) e.target.before(dragged); else e.target.after(dragged);
+    }
 });
 </script>
 </body>
