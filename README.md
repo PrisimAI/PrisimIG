@@ -1,6 +1,6 @@
-# PrisimAI Ultimate - Liquid Glass Image Generator
+# PrisimIG
 
-PrisimAI Ultimate is a **powerful, browser-based AI image generator** with a sleek **liquid glass UI**. It allows users to generate images using **Flux** and **Turbo** models with full customization options, prompt history, batch generation, and more.  
+PrisimIG is a **powerful, browser-based AI image generator** with a sleek **liquid glass UI**. It allows users to generate images using **Flux** and **Turbo** models with full customization options, prompt history, batch generation, and more.  
 
 Built with **HTML, CSS (Tailwind), and JavaScript**, it’s designed to feel like a professional tool while remaining lightweight and fast.
 
