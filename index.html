@@ -224,6 +224,7 @@ body.dark .gradient-border {
                 <select id="model-selector" class="w-full p-3 rounded-xl gradient-border bg-white/40 dark:bg-gray-700/40 select-arrow focus:ring-2 focus:ring-purple-500/50 shadow-inner">
                     <option value="flux">Flux</option>
                     <option value="turbo">Turbo</option>
+                    <option value="kontext">Kontext (Image-to-Image)</option>
                 </select>
             </div>
 
@@ -240,7 +241,8 @@ body.dark .gradient-border {
                 <label class="font-medium text-gray-700 dark:text-gray-300">Style</label>
                 <select id="style-selector" class="w-full p-3 rounded-xl gradient-border bg-white/40 dark:bg-gray-700/40 select-arrow focus:ring-2 focus:ring-purple-500/50 shadow-inner">
                     <option value="realistic">Realistic</option>
-                    <option value="anime" selected>Anime                    <option value="cartoon">Cartoon</option>
+                    <option value="anime" selected>Anime</option>
+                    <option value="cartoon">Cartoon</option>
                     <option value="fantasy">Fantasy</option>
                 </select>
             </div>
@@ -256,6 +258,11 @@ body.dark .gradient-border {
             <input type="number" id="seed-input" placeholder="Enter seed for consistent results..." class="w-full p-3 rounded-xl gradient-border bg-white/40 dark:bg-gray-700/40 focus:outline-none focus:ring-2 focus:ring-purple-500/50 shadow-inner">
         </div>
 
+        <div class="space-y-2" id="reference-container" style="display:none;">
+            <label class="font-medium text-gray-700 dark:text-gray-300">Reference Image (for Image-to-Image)</label>
+            <input type="file" id="reference-image" accept="image/*" class="w-full p-2 rounded-xl bg-white/40 dark:bg-gray-700/40 shadow-inner" />
+        </div>
+
         <div class="flex flex-col gap-3">
             <button id="generate-btn" class="w-full p-4 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold shadow-lg hover:from-purple-700 hover:to-blue-700 active:scale-95 transition-all duration-200 transform hover:-translate-y-0.5">
                 🎨 Generate Image
@@ -266,75 +273,25 @@ body.dark .gradient-border {
         </div>
     </div>
 
-    <div class="mt-6 pt-4 border-t border-gray-200/30 dark:border-gray-600/30">
-        <p class="text-sm text-gray-600 dark:text-gray-400 text-center">Powered by Pollinations AI</p>
-    </div>
+    <p class="mt-6 text-gray-500 dark:text-gray-400 text-sm text-center">Images Generated: <span id="image-count">0 images</span></p>
 </aside>
 
-<!-- Main Feed -->
-<main class="flex-1 flex flex-col overflow-hidden">
-    <div class="relative glass p-6 h-full">
-        <div class="liquid-gradient"></div>
-        <div class="flex items-center justify-between mb-6 relative z-10">
-            <h2 class="text-2xl font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Your Creations</h2>
-            <span id="image-count" class="text-sm text-gray-600 dark:text-gray-400">0 images</span>
-        </div>
-        <div id="image-feed" class="flex flex-wrap gap-6 relative z-10 overflow-y-auto pb-4"></div>
-    </div>
+<!-- Image Feed -->
+<main id="image-feed" class="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto p-4 relative z-0">
+    <div class="liquid-gradient"></div>
 </main>
+
 <!-- Tutorial Overlay -->
-<div id="tutorial-overlay" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-2xl w-full relative glass">
-        <button id="tutorial-close-btn" class="absolute top-6 right-6 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-        </button>
-        
-        <h2 class="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Welcome to PrisimIG! ✨</h2>
-        <p class="text-lg mb-8 text-center text-gray-700 dark:text-gray-300">Turn your imagination into stunning visuals</p>
-
-        <div class="space-y-6">
-            <div class="flex items-start space-x-4">
-                <span class="tutorial-step-number rounded-full w-8 h-8 flex items-center justify-center font-bold text-white text-sm">1</span>
-                <div>
-                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Describe Your Vision</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Type anything you can imagine - the more detailed, the better!</p>
-                </div>
-            </div>
-
-div class="flex items-start space-x-4">
-                <span class="tutorial-step-number rounded-full w-8 h-8 flex items-center justify-center font-bold text-white text-sm">2</span>
-                <div>
-                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Customize Your Creation</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Choose style, size, and model to match your vision perfectly</p>
-                </div>
-            </div>
-
-            <div class="flex items-start space-x-4">
-                <span class="tutorial-step-number rounded-full w-8 h-8 flex items-center justify-center font-bold text-white text-sm">3</span>
-                <div>
-                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Generate & Explore</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Create multiple variations and discover unexpected results</p>
-                </div>
-            </div>
-
-            <div class="flex items-start space-x-4">
-                <span class="tutorial-step-number rounded-full w-8 h-8 flex items-center justify-center font-bold text-white text-sm">4</span>
-                <div>
-                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Share & Remix</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Download your favorites or right-click to create new variations</p>
-                </div>
-            </div>
-        </div>
-
-        <button id="tutorial-done-btn" class="w-full mt-8 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95">
-            Start Creating! 🎨
-        </button>
+<div id="tutorial-overlay" class="fixed inset-0 bg-black/60 flex items-center justify-center p-6">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl max-w-xl text-center relative">
+        <h2 class="text-2xl font-bold mb-4">Welcome to PrisimIG</h2>
+        <p class="text-gray-700 dark:text-gray-300 mb-6">Generate AI images from text prompts. Choose a model, style, and batch size. For image-to-image, select 'Kontext' and upload a reference image.</p>
+        <button id="tutorial-done-btn" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold hover:from-purple-700 hover:to-blue-700">Got it!</button>
+        <button id="tutorial-close-btn" class="absolute top-4 right-4 text-gray-500 dark:text-gray-300 text-xl font-bold">×</button>
     </div>
 </div>
-    <script>
-// DOM Elements
+
+<script>
 const darkToggle = document.getElementById('dark-mode-toggle');
 const generateBtn = document.getElementById('generate-btn');
 const imageFeed = document.getElementById('image-feed');
@@ -346,22 +303,20 @@ const seedInput = document.getElementById('seed-input');
 const batchSizeInput = document.getElementById('batch-size');
 const promptHistoryContainer = document.getElementById('prompt-history');
 const imageCountElement = document.getElementById('image-count');
+const referenceInput = document.getElementById('reference-image');
+const referenceContainer = document.getElementById('reference-container');
 
-// State management
 let promptHistory = JSON.parse(localStorage.getItem('promptHistory') || '[]');
 let imageCount = 0;
 
-// Theme handling
 darkToggle.addEventListener('click', () => {
-    document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    document.body.classList.toggle('dark');
+    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
 });
-
 if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    document.documentElement.classList.add('dark');
+    document.body.classList.add('dark');
 }
 
-// Prompt history functions
 function savePrompt(prompt) {
     if (!prompt) return;
     promptHistory.unshift(prompt);
@@ -382,7 +337,6 @@ function renderPromptHistory() {
     });
 }
 
-// Loading animation
 function showLoading() {
     const loader = document.createElement('div');
     loader.className = 'p-6 rounded-2xl shadow-md bg-white/50 dark:bg-gray-700/50 flex items-center justify-center space-x-2 fade-in';
@@ -398,18 +352,34 @@ function showLoading() {
     return loader;
 }
 
-// Image generation with unique seed
-function generateImage(prompt, seed) {
+async function generateImage(prompt, seed) {
     const loader = showLoading();
-
     try {
         const imgWrapper = document.createElement('div');
         imgWrapper.className = 'flex flex-col items-center fade-in';
         imgWrapper.style.width = 'min(100%, 300px)';
 
-        const img = document.createElement('img');
+        let model = modelSelector.value;
+        let size = sizeSelector.value;
+        let style = styleSelector.value;
         let seedParam = seed ? `&seed=${seed}` : '';
-        img.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}${seedParam}`;
+        let referrer = '&referrer=https://prisimai.github.io/PrisimAI';
+
+        let url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?model=${model}&size=${size}&style=${style}${seedParam}${referrer}`;
+
+        if (model === 'kontext' && referenceInput.files[0]) {
+            const file = referenceInput.files[0];
+            const reader = new FileReader();
+            await new Promise((resolve, reject) => {
+                reader.onload = () => resolve();
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+            url += `&image=${encodeURIComponent(reader.result)}`;
+        }
+
+        const img = document.createElement('img');
+        img.src = url;
         img.className = 'img-card w-full h-64 object-cover shadow-xl';
         img.draggable = true;
         img.title = "Right-click to remix";
@@ -459,7 +429,6 @@ function generateImage(prompt, seed) {
     }
 }
 
-// Event listeners
 generateBtn.addEventListener('click', async () => {
     const prompt = promptInput.value.trim();
     if (!prompt) {
@@ -468,7 +437,6 @@ generateBtn.addEventListener('click', async () => {
     }
 
     savePrompt(prompt);
-
     const batch = Math.min(Math.max(parseInt(batchSizeInput.value) || 1, 1), 5);
 
     generateBtn.disabled = true;
@@ -476,8 +444,8 @@ generateBtn.addEventListener('click', async () => {
 
     for (let i = 0; i < batch; i++) {
         let seed = seedInput.value ? parseInt(seedInput.value) + i : Math.floor(Math.random() * 1000000);
-        generateImage(prompt, seed);
-        await new Promise(resolve => setTimeout(resolve, 500)); // stagger generation
+        await generateImage(prompt, seed);
+        await new Promise(resolve => setTimeout(resolve, 500));
     }
 
     generateBtn.disabled = false;
@@ -486,72 +454,50 @@ generateBtn.addEventListener('click', async () => {
 
 document.getElementById('clear-feed').addEventListener('click', () => {
     imageFeed.innerHTML = '';
+    const gradient = document.createElement('div');
+    gradient.className = 'liquid-gradient';
+    imageFeed.appendChild(gradient);
     imageCount = 0;
     imageCountElement.textContent = '0 images';
 });
 
-// Auto-resize textarea
 promptInput.addEventListener('input', () => {
     promptInput.style.height = 'auto';
     promptInput.style.height = `${Math.min(promptInput.scrollHeight, 150)}px`;
 });
 
-// Drag and drop for images
+modelSelector.addEventListener('change', () => {
+    referenceContainer.style.display = modelSelector.value === 'kontext' ? 'block' : 'none';
+});
+
+// Drag & Drop
 let dragged;
-document.addEventListener('dragstart', e => {
-    if (e.target.classList.contains('img-card')) {
-        dragged = e.target;
-        e.target.style.opacity = '0.5';
-    }
-});
-
-document.addEventListener('dragend', e => {
-    if (e.target.classList.contains('img-card')) {
-        e.target.style.opacity = '1';
-    }
-});
-
+document.addEventListener('dragstart', e => { if (e.target.classList.contains('img-card')) { dragged = e.target; e.target.style.opacity = '0.5'; }});
+document.addEventListener('dragend', e => { if (e.target.classList.contains('img-card')) { e.target.style.opacity = '1'; }});
 document.addEventListener('dragover', e => e.preventDefault());
-
 document.addEventListener('drop', e => {
     e.preventDefault();
     if (e.target.classList.contains('img-card') && dragged) {
         const rect = e.target.getBoundingClientRect();
-        if (e.clientY < rect.top + rect.height / 2) {
-            e.target.before(dragged);
-        } else {
-            e.target.after(dragged);
-        }
+        if (e.clientY < rect.top + rect.height / 2) e.target.before(dragged);
+        else e.target.after(dragged);
     }
 });
 
-// Tutorial overlay
+// Tutorial
 const tutorialOverlay = document.getElementById('tutorial-overlay');
 const tutorialCloseBtn = document.getElementById('tutorial-close-btn');
 const tutorialDoneBtn = document.getElementById('tutorial-done-btn');
 const TUTORIAL_SEEN_KEY = 'prisimigTutorialSeen';
 
-function showTutorial() {
-    if (!localStorage.getItem(TUTORIAL_SEEN_KEY)) {
-        tutorialOverlay.classList.add('visible');
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-function hideTutorial() {
-    tutorialOverlay.classList.remove('visible');
-    document.body.style.overflow = '';
-    localStorage.setItem(TUTORIAL_SEEN_KEY, 'true');
-}
-
+function showTutorial() { if (!localStorage.getItem(TUTORIAL_SEEN_KEY)) { tutorialOverlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
+function hideTutorial() { tutorialOverlay.classList.remove('visible'); document.body.style.overflow = ''; localStorage.setItem(TUTORIAL_SEEN_KEY, 'true'); }
 tutorialOverlay?.addEventListener('click', e => { if (e.target === tutorialOverlay) hideTutorial(); });
 tutorialCloseBtn?.addEventListener('click', hideTutorial);
 tutorialDoneBtn?.addEventListener('click', hideTutorial);
 
-// Initialize
 renderPromptHistory();
 showTutorial();
 </script>
-
 </body>
 </html>
