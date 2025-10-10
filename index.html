@@ -282,8 +282,58 @@ body.dark .gradient-border {
         <div id="image-feed" class="flex flex-wrap gap-6 relative z-10 overflow-y-auto pb-4"></div>
     </div>
 </main>
+<!-- Tutorial Overlay -->
+<div id="tutorial-overlay" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-2xl w-full relative glass">
+        <button id="tutorial-close-btn" class="absolute top-6 right-6 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+        
+        <h2 class="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Welcome to PrisimIG! ✨</h2>
+        <p class="text-lg mb-8 text-center text-gray-700 dark:text-gray-300">Turn your imagination into stunning visuals</p>
 
-<script>
+        <div class="space-y-6">
+            <div class="flex items-start space-x-4">
+                <span class="tutorial-step-number rounded-full w-8 h-8 flex items-center justify-center font-bold text-white text-sm">1</span>
+                <div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Describe Your Vision</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Type anything you can imagine - the more detailed, the better!</p>
+                </div>
+            </div>
+
+div class="flex items-start space-x-4">
+                <span class="tutorial-step-number rounded-full w-8 h-8 flex items-center justify-center font-bold text-white text-sm">2</span>
+                <div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Customize Your Creation</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Choose style, size, and model to match your vision perfectly</p>
+                </div>
+            </div>
+
+            <div class="flex items-start space-x-4">
+                <span class="tutorial-step-number rounded-full w-8 h-8 flex items-center justify-center font-bold text-white text-sm">3</span>
+                <div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Generate & Explore</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Create multiple variations and discover unexpected results</p>
+                </div>
+            </div>
+
+            <div class="flex items-start space-x-4">
+                <span class="tutorial-step-number rounded-full w-8 h-8 flex items-center justify-center font-bold text-white text-sm">4</span>
+                <div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Share & Remix</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Download your favorites or right-click to create new variations</p>
+                </div>
+            </div>
+        </div>
+
+        <button id="tutorial-done-btn" class="w-full mt-8 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95">
+            Start Creating! 🎨
+        </button>
+    </div>
+</div>
+    <script>
 // DOM Elements
 const darkToggle = document.getElementById('dark-mode-toggle');
 const generateBtn = document.getElementById('generate-btn');
@@ -296,9 +346,6 @@ const seedInput = document.getElementById('seed-input');
 const batchSizeInput = document.getElementById('batch-size');
 const promptHistoryContainer = document.getElementById('prompt-history');
 const imageCountElement = document.getElementById('image-count');
-const apiKey = 'ScdTyGr9t5KJxW_c';
-const referrer = 'https://prisimai.github.io/PrisimAI';
-const imageApiUrl = 'https://image.pollinations.ai/prompt/';
 
 // State management
 let promptHistory = JSON.parse(localStorage.getItem('promptHistory') || '[]');
@@ -351,71 +398,59 @@ function showLoading() {
     return loader;
 }
 
-// Image generation
-async function generateImage(prompt, seed) {
+// Image generation with unique seed
+function generateImage(prompt, seed) {
     const loader = showLoading();
-    const params = {
-        model: modelSelector.value,
-        size: sizeSelector.value,
-        style: styleSelector.value,
-        seed: seed || ''
-    };
-    
-    const url = `${imageApiUrl}${encodeURIComponent(prompt)}?model=${params.model}&size=${params.size}&style=${params.style}&seed=${params.seed}&key=${apiKey}&referrer=${referrer}`;
-    
+
     try {
-        const res = await fetch(url);
-        if (res.ok) {
-            const imgWrapper = document.createElement('div');
-            imgWrapper.className = 'flex flex-col items-center fade-in';
-            imgWrapper.style.width = 'min(100%, 300px)';
-            
-            const img = document.createElement('img');
-            img.src = url;
-            img.className = 'img-card w-full h-64 object-cover shadow-xl';
-            img.draggable = true;
-            img.title = "Right-click to remix";
-            img.loading = "lazy";
+        const imgWrapper = document.createElement('div');
+        imgWrapper.className = 'flex flex-col items-center fade-in';
+        imgWrapper.style.width = 'min(100%, 300px)';
 
-            img.oncontextmenu = e => {
-                e.preventDefault();
-                promptInput.value = `Remix: ${prompt}`;
-                promptInput.focus();
-            };
+        const img = document.createElement('img');
+        let seedParam = seed ? `&seed=${seed}` : '';
+        img.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}${seedParam}`;
+        img.className = 'img-card w-full h-64 object-cover shadow-xl';
+        img.draggable = true;
+        img.title = "Right-click to remix";
+        img.loading = "lazy";
 
-            const controls = document.createElement('div');
-            controls.className = 'img-controls';
-            
-            const downloadBtn = document.createElement('button');
-            downloadBtn.innerHTML = '⬇️ Download';
-            downloadBtn.className = 'bg-green-500 text-white hover:bg-green-600';
-            downloadBtn.onclick = () => {
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `prisimig-${Date.now()}.png`;
-                a.click();
-            };
+        img.oncontextmenu = e => {
+            e.preventDefault();
+            promptInput.value = `Remix: ${prompt}`;
+            promptInput.focus();
+        };
 
-            const remixBtn = document.createElement('button');
-            remixBtn.innerHTML = '🔄 Remix';
-            remixBtn.className = 'bg-purple-500 text-white hover:bg-purple-600';
-            remixBtn.onclick = () => {
-                promptInput.value = `Remix: ${prompt}`;
-                promptInput.focus();
-            };
+        const controls = document.createElement('div');
+        controls.className = 'img-controls';
 
-            controls.appendChild(downloadBtn);
-            controls.appendChild(remixBtn);
-            
-            imgWrapper.appendChild(img);
-            imgWrapper.appendChild(controls);
-            imageFeed.prepend(imgWrapper);
-            
-            imageCount++;
-            imageCountElement.textContent = `${imageCount} image${imageCount !== 1 ? 's' : ''}`;
-        } else {
-            alert('Failed to generate image. Please try again.');
-        }
+        const downloadBtn = document.createElement('button');
+        downloadBtn.innerHTML = '⬇️ Download';
+        downloadBtn.className = 'bg-green-500 text-white hover:bg-green-600';
+        downloadBtn.onclick = () => {
+            const a = document.createElement('a');
+            a.href = img.src;
+            a.download = `prisimig-${Date.now()}.png`;
+            a.click();
+        };
+
+        const remixBtn = document.createElement('button');
+        remixBtn.innerHTML = '🔄 Remix';
+        remixBtn.className = 'bg-purple-500 text-white hover:bg-purple-600';
+        remixBtn.onclick = () => {
+            promptInput.value = `Remix: ${prompt}`;
+            promptInput.focus();
+        };
+
+        controls.appendChild(downloadBtn);
+        controls.appendChild(remixBtn);
+
+        imgWrapper.appendChild(img);
+        imgWrapper.appendChild(controls);
+        imageFeed.prepend(imgWrapper);
+
+        imageCount++;
+        imageCountElement.textContent = `${imageCount} image${imageCount !== 1 ? 's' : ''}`;
     } catch (e) {
         console.error('Generation error:', e);
         alert('Error generating image. Check your connection and try again.');
@@ -431,19 +466,20 @@ generateBtn.addEventListener('click', async () => {
         promptInput.focus();
         return;
     }
-    
+
     savePrompt(prompt);
+
     const batch = Math.min(Math.max(parseInt(batchSizeInput.value) || 1, 1), 5);
-    
+
     generateBtn.disabled = true;
     generateBtn.textContent = 'Generating...';
-    
+
     for (let i = 0; i < batch; i++) {
-        let seed = seedInput.value || Math.floor(Math.random() * 1000000);
-        await generateImage(prompt, seed);
-        await new Promise(resolve => setTimeout(resolve, 500)); // Stagger generations
+        let seed = seedInput.value ? parseInt(seedInput.value) + i : Math.floor(Math.random() * 1000000);
+        generateImage(prompt, seed);
+        await new Promise(resolve => setTimeout(resolve, 500)); // stagger generation
     }
-    
+
     generateBtn.disabled = false;
     generateBtn.textContent = '🎨 Generate Image';
 });
@@ -465,7 +501,7 @@ let dragged;
 document.addEventListener('dragstart', e => {
     if (e.target.classList.contains('img-card')) {
         dragged = e.target;
-        e.target.style.opacity =';
+        e.target.style.opacity = '0.5';
     }
 });
 
@@ -489,7 +525,7 @@ document.addEventListener('drop', e => {
     }
 });
 
-// Tutorial overlay functions
+// Tutorial overlay
 const tutorialOverlay = document.getElementById('tutorial-overlay');
 const tutorialCloseBtn = document.getElementById('tutorial-close-btn');
 const tutorialDoneBtn = document.getElementById('tutorial-done-btn');
@@ -508,69 +544,14 @@ function hideTutorial() {
     localStorage.setItem(TUTORIAL_SEEN_KEY, 'true');
 }
 
+tutorialOverlay?.addEventListener('click', e => { if (e.target === tutorialOverlay) hideTutorial(); });
+tutorialCloseBtn?.addEventListener('click', hideTutorial);
+tutorialDoneBtn?.addEventListener('click', hideTutorial);
+
 // Initialize
 renderPromptHistory();
 showTutorial();
-
-// Close tutorial when clicking outside
-tutorialOverlay.addEventListener('click', (e) => {
-    if (e.target === tutorialOverlay) hideTutorial();
-});
-
-tutorialCloseBtn.addEventListener('click', hideTutorial);
-tutorialDoneBtn.addEventListener('click', hideTutorial);
 </script>
 
-<!-- Tutorial Overlay -->
-<div id="tutorial-overlay" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-2xl w-full relative glass">
-        <button id="tutorial-close-btn" class="absolute top-6 right-6 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-        </button>
-        
-        <h2 class="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Welcome to PrisimIG! ✨</h2>
-        <p class="text-lg mb-8 text-center text-gray-700 dark:text-gray-300">Turn your imagination into stunning visuals</p>
-
-        <div class="space-y-6">
-            <div class="flex items-start space-x-4">
-                <span class="tutorial-step-number rounded-full w-8 h-8 flex items-center justify-center font-bold text-white text-sm">1</span>
-                <div>
-                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Describe Your Vision</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Type anything you can imagine - the more detailed, the better!</p>
-                </div>
-            </div>
-
-div class="flex items-start space-x-4">
-                <span class="tutorial-step-number rounded-full w-8 h-8 flex items-center justify-center font-bold text-white text-sm">2</span>
-                <div>
-                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Customize Your Creation</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Choose style, size, and model to match your vision perfectly</p>
-                </div>
-            </div>
-
-            <div class="flex items-start space-x-4">
-                <span class="tutorial-step-number rounded-full w-8 h-8 flex items-center justify-center font-bold text-white text-sm">3</span>
-                <div>
-                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Generate & Explore</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Create multiple variations and discover unexpected results</p>
-                </div>
-            </div>
-
-            <div class="flex items-start space-x-4">
-                <span class="tutorial-step-number rounded-full w-8 h-8 flex items-center justify-center font-bold text-white text-sm">4</span>
-                <div>
-                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Share & Remix</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Download your favorites or right-click to create new variations</p>
-                </div>
-            </div>
-        </div>
-
-        <button id="tutorial-done-btn" class="w-full mt-8 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95">
-            Start Creating! 🎨
-        </button>
-    </div>
-</div>
 </body>
 </html>
