@@ -83,6 +83,16 @@ body.dark { background: linear-gradient(135deg,#0f172a 0%,#1e293b 100%); }
                 <label class="font-medium text-gray-700 dark:text-gray-300">Seed (optional)</label>
                 <input type="number" id="seed-input" placeholder="Enter seed..." class="w-full p-3 rounded-xl bg-white/40 dark:bg-gray-700/40">
             </div>
+
+            <div class="space-y-2 col-span-2">
+                <label class="font-medium text-gray-700 dark:text-gray-300">Optional Features</label>
+                <div class="flex flex-wrap gap-2">
+                    <label><input type="checkbox" id="nologo"> No Logo</label>
+                    <label><input type="checkbox" id="private"> Private</label>
+                    <label><input type="checkbox" id="enhance"> Enhance</label>
+                    <label><input type="checkbox" id="safe"> Safe Mode</label>
+                </div>
+            </div>
         </div>
 
         <div class="flex flex-col gap-3">
@@ -117,6 +127,11 @@ const imageCountElement = document.getElementById('image-count');
 const referenceInput = document.getElementById('reference-image');
 const referenceContainer = document.getElementById('reference-container');
 const tooltip = document.getElementById('tooltip');
+
+const nologoInput = document.getElementById('nologo');
+const privateInput = document.getElementById('private');
+const enhanceInput = document.getElementById('enhance');
+const safeInput = document.getElementById('safe');
 
 let promptHistory = JSON.parse(localStorage.getItem('promptHistory') || '[]');
 let imageCount = 0;
@@ -178,8 +193,14 @@ async function generateImage(prompt, seed) {
         let width = widthInput.value;
         let height = heightInput.value;
         let seedParam = seed ? `&seed=${seed}` : '';
+        let optionalParams = '';
 
-        let url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?model=${model}&width=${width}&height=${height}${seedParam}`;
+        if(nologoInput.checked) optionalParams += '&nologo=true';
+        if(privateInput.checked) optionalParams += '&private=true';
+        if(enhanceInput.checked) optionalParams += '&enhance=true';
+        if(safeInput.checked) optionalParams += '&safe=true';
+
+        let url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?model=${model}&width=${width}&height=${height}${seedParam}${optionalParams}`;
 
         if (model === 'kontext' && referenceInput.files[0]) {
             const reader = new FileReader();
@@ -198,7 +219,6 @@ async function generateImage(prompt, seed) {
         img.title = "Right-click to remix";
         img.loading = "lazy";
 
-        // Tooltip
         img.addEventListener('mouseenter', () => {
             tooltip.textContent = prompt;
             const rect = img.getBoundingClientRect();
@@ -212,7 +232,6 @@ async function generateImage(prompt, seed) {
         });
         img.addEventListener('mouseleave', () => { tooltip.style.opacity = 0; });
 
-        // Context menu
         img.oncontextmenu = e => {
             e.preventDefault();
             promptInput.value = `Remix: ${prompt}`;
